@@ -1,0 +1,39 @@
+- hosts: admin
+
+  tasks:
+        - name: installation du jdk8
+          package: name=openjdk-8-jdk-headless state=present
+
+        - name: créer un utilisateur 'wildfly'
+          user:
+                name: wildfly
+                comment: wildfly
+                group: admin
+                system: yes
+                createhome: no
+                shell: /bin/false
+        
+        - name: archive wildfly
+          unarchive:
+           src: http://download.jboss.org/wildfly/11.0.0.Final.tar.gz
+           dest: /opt/wildfly/
+           owner: wildfly
+        
+        - file:
+         path: /etc/wildfly
+         state: directory
+         mode: 0755
+
+        - name: copy
+          copy:
+           src: /opt/wildfly/docs/contrib/scripts/systemd
+           dest: /etc/wildfly
+           owner: wildfly
+           group: admin
+           mode: 0644
+    
+        - name: ajout wildfly à systemd
+          systemd:
+           state: restarted
+           daemon_reload: yes
+           name: crond
