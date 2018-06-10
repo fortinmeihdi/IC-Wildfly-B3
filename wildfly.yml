@@ -1,55 +1,56 @@
-- hosts: wildfly
-  tasks:
-        - name: installation du jdk8
-          package: name=openjdk-8-jdk-headless state=present
+---
 
-        - name: créer un utilisateur 'wildfly'
-          user:
-                name: wildfly
-                comment: wildfly
-                system: yes
-                home: /home/wildfly
-                shell: /bin/false
+- hosts: localhost
+
+  tasks:
+  
+    - name: installation du jdk8
+      package: name=openjdk-8-jdk-headless state=present
+
+    - name: créer un utilisateur 'wildfly'
+      user:
+       name: wildfly
+       comment: wildfly
+       system: yes
+       home: /home/wildfly
+       shell: /bin/false
+       
+    - name: creation repertoire /opt/wildfly
+      file: path=/opt/wildfly state=directory
         
-        - name: archive wildfly (téléchargment et extraction
-          unarchive:
-           src: http://download.jboss.org/wildfly/11.0.0.Final.tar.gz
-           dest: /opt/wildfly/
-           owner: wildfly
-           remote_src: yes
-           creates: /home/wildfly/wildfly-11.0.0.Final
+    - name: archive wildfly (téléchargment et extraction
+      unarchive:
+       src: http://download.jboss.org/wildfly/11.0.0.Final/wildfly-11.0.0.Final.tar.gz
+       dest: /opt/wildfly
+       owner: wildfly
+       remote_src: yes
         
-        - name: lien siymbolique
-          file:
-            src: /home/wildfly/wildfly-11.0.0.Final
-            dest: /opt/wildfly/
-            owner: wildfly
-            state: link
+    - name: lien siymbolique
+      file:
+       src: /home/wildfly/wildfly-11.0.0.Final
+       dest: /opt/wildfly/
+       owner: wildfly
+       state: link
             
-        - name: conf wildfly
-          copy:
-            src: /home/wildfly/wildfly-11.0.0.Final/docs/contrib/scripts/systemd/wildfly.conf
-            dest: /etc/wildfly/
-            owner: wildfly
-            remote_src: yes
+    - name: conf wildfly
+      copy:
+       src: /home/wildfly/wildfly-11.0.0.Final/docs/contrib/scripts/systemd/wildfly.conf
+       dest: /etc/wildfly/
+       owner: wildfly
+       remote_src: yes
             
-        - name: copie service
-          copy:
-            src: /home/wildfly/wildfly-11.0.0.Final/docs/contrib/scripts/systemd/wildfly.service
-            dest: /home/wildly/wildfly-11.0.0.Final
-            owner: wildfly
-            remote_src: yes
+    - name: copie service
+      copy:
+       src: /home/wildfly/wildfly-11.0.0.Final/docs/contrib/scripts/systemd/wildfly.service
+       dest: /home/wildly/wildfly-11.0.0.Final
+       owner: wildfly
+       remote_src: yes
               
-        - name: copie lancement
-          copy:
-            src: /home/wildfly/wildfly-11.0.0.Final/docs/contrib/scripts/systemd/launch.sh
-            dest: /home/wildfly/wildfly-11.0.0.Final/bin
-            owner: wildfly
-            mode: 0644
-            remote_src: yes
+    - name: copie lancement
+      copy:
+       src: /home/wildfly/wildfly-11.0.0.Final/docs/contrib/scripts/systemd/launch.sh
+       dest: /home/wildfly/wildfly-11.0.0.Final/bin
+       owner: wildfly
+       mode: 0644
+       remote_src: yes
             
-        - name: ajout wildfly à systemd
-          systemd:
-           state: restarted
-           daemon_reload: yes
-           name: wildfly
