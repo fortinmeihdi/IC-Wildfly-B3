@@ -1,6 +1,6 @@
 ---
 
-- hosts: localhost
+- hosts: ubuntu
 
   tasks:
   
@@ -14,35 +14,32 @@
        system: yes
        home: /home/wildfly
        shell: /bin/false
-       
-    - name: creation repertoire /opt/wildfly
-      file: path=/opt/wildfly state=directory
         
     - name: archive wildfly (téléchargment et extraction
       unarchive:
        src: http://download.jboss.org/wildfly/11.0.0.Final/wildfly-11.0.0.Final.tar.gz
-       dest: /opt/wildfly
+       dest: /home/wildfly
        owner: wildfly
        remote_src: yes
         
     - name: lien siymbolique
       file:
        src: /home/wildfly/wildfly-11.0.0.Final
-       dest: /opt/wildfly/
+       dest: /opt/wildfly
        owner: wildfly
        state: link
             
     - name: conf wildfly
       copy:
        src: /home/wildfly/wildfly-11.0.0.Final/docs/contrib/scripts/systemd/wildfly.conf
-       dest: /etc/wildfly/
+       dest: /etc/wildfly
        owner: wildfly
        remote_src: yes
             
     - name: copie service
       copy:
        src: /home/wildfly/wildfly-11.0.0.Final/docs/contrib/scripts/systemd/wildfly.service
-       dest: /home/wildly/wildfly-11.0.0.Final
+       dest: /home/wildfly/wildfly-11.0.0.Final
        owner: wildfly
        remote_src: yes
               
